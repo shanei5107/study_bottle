@@ -6,9 +6,10 @@ import sys
 sys.path.insert(0,
                 os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from bottle import run, route
+from bottle import run, route, HTTPError, install
 from core.application import create_default_app_application
 from core.logger import logger, create_customize_log
+from core.exceptions import ErrorsRestPlugin
 
 
 @route('/hello')
@@ -17,25 +18,59 @@ def hello():
 
 
 def curr_create_customize_log():
-    pro_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
-    create_customize_log(pro_path)
-    # create_customize_log(pro_path=os.path.split(os.path.realpath(__file__)[0]))
+    '''
+    配置日志路径、配置信息
+    '''
+    create_customize_log(pro_path=os.path.abspath(
+        os.path.join(os.path.dirname(__file__), '..')))
 
 
 def test_customize_log_writer():
+    '''
+    测试写入日志
+    '''
     logger.info('服务启动......')
-
-
-def test_customize_error_log_writer():
     logger.error('服务启动......')
+
+
+def register_global_error_catch(e, is_send=True):
+    '''
+    注册全局异常捕获
+    '''
+    if isinstance(e, HTTPError):
+        code = e.status_code
+        if code == 400:
+            # 参数校验异常
+            pass
+        elif code == 401:
+            # 请求不允许
+            pass
+        elif code == 403:
+            # 访问权限受限
+            pass
+        elif code == 404:
+            # 资源不存在
+            pass
+        elif code == 405:
+            # 请求方式异常
+            pass
+        elif code == 429:
+            # 限流异常
+            pass
+        else:
+            pass
+    else:
+        logger.exception(e)
 
 
 if __name__ == '__main__':
     # 日志
     curr_create_customize_log()
-    # 写日志
+    # 测试写入日志
     test_customize_log_writer()
-    test_customize_error_log_writer()
+
+    # 配置全局异常
+    install(ErrorsRestPlugin(error_handler=register_global_error_catch))
 
     # 创建应用实例
     app = create_default_app_application()
