@@ -10,6 +10,7 @@ from bottle import run, route, HTTPError, install
 from core.application import create_default_app_application
 from core.logger import logger, create_customize_log
 from core.exceptions import ErrorsRestPlugin
+from core.rsp import *
 
 
 @route('/hello')
@@ -41,26 +42,27 @@ def register_global_error_catch(e, is_send=True):
         code = e.status_code
         if code == 400:
             # 参数校验异常
-            pass
+            return ParameterException(code=code, msg=e.body)
         elif code == 401:
             # 请求不允许
-            pass
+            return UnauthorizedException()
         elif code == 403:
             # 访问权限受限
-            pass
+            return ForbiddenException()
         elif code == 404:
             # 资源不存在
-            pass
+            return NotfoundException()
         elif code == 405:
             # 请求方式异常
-            pass
+            return MethodNotAllowedException()
         elif code == 429:
             # 限流异常
-            pass
+            return RateLimitApiException()
         else:
-            pass
+            return OtherException(code=code)
     else:
         logger.exception(e)
+        return CustomizeApiResponse(msg='系统内部错误，请联系系统管理员')
 
 
 if __name__ == '__main__':
