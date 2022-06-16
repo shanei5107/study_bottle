@@ -145,6 +145,12 @@ class RateLimitApiException(ApiResponse):
     msg = '请求次数受限'
 
 
+class BusinessException(ApiResponse):
+    http_status_code = 200
+    code = 9999
+    msg = '业务异常'
+
+
 class CustomizeApiResponse(ApiResponse):
     http_status_code = 200
     code = SUCCESS_CODE
