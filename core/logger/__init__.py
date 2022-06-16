@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from importlib.resources import path
+from resource import getrusage
 import time
 from bottle import request, response
 from datetime import datetime
@@ -6,10 +8,10 @@ from loguru import logger
 
 
 def create_customize_log(pro_path=None):
-    '''
+    """
     loguru日志集成
     :param pro_path
-    '''
+    """
     import os
     if not pro_path:
         pro_path = os.path.split(os.path.realpath(__file__))[0]
@@ -41,3 +43,88 @@ def create_customize_log(pro_path=None):
                encoding='utf-8',
                level='ERROR',
                enqueue=True)  # Automatically rotate too big file
+
+
+# 封闭一下关于记录序号的日志记录用于全链路的日志请求的日志
+def _link_init_log_record():
+    request.request_links_logs = []
+    request.request_links_index = 0
+
+
+# 封闭一下关于记录序号的日志记录用于全链路的日志请求的日志
+def link_add_log_record(event_des='', msg_dict={}, remarks=''):
+    request.request_links_index = request.request_links_index + 1
+    log = {
+        'link_index': request.request_links_index,
+        'event_des': event_des,
+        'msg_dict': msg_dict,
+        'remarks': remarks
+    }
+    if not remarks:
+        log.pop('remarks')
+    if not msg_dict:
+        log.pop('msg_dict')
+    request.request_links_logs.append(log)
+
+
+# 路由白名单: 不记录请求日志
+WHITE_PATH_LIST = ['/favicon.ico', 'health']
+
+
+def register_link_init_log_record_handler():
+    """
+    过滤指定一些路由的请求，不记录日志
+    """
+    path_info = request.environ.get('PATH_INFO')
+    if path_info not in WHITE_PATH_LIST:
+        response.content_body_text = None
+        # 配置日志初始化
+        _link_init_log_record()
+        # 计算时间
+        request.request_start_time = time.time()
+        # 开始记录日志
+        link_add_log_record(event_des='request-start')
+
+
+def register_link_end_log_record_handler():
+    """
+    一个请求结束的时候，日志记录下这个请求的整个过程和返回响应体信息
+    """
+    path_info = request.environ.get('PATH_INFO')
+    if path_info not in WHITE_PATH_LIST and request.method != 'OPTIONS':
+        link_add_log_record(event_des='request-end')
+        # 统筹记录最后的请求日志信息
+        log_msg = {
+            'host': request.headers.get('Host'),
+            'url': request.url,
+            'method': request.method,
+            'params': {
+                'query_string':
+                '' if not request.query_string else request.query_string,
+                'query':
+                '' if not request.query else request.query.decode("utf-8"),
+                'forms': '' if not request.forms else request.forms,
+                'body': '' if not request.body else request.body,
+            },
+            'req_stime':
+            str(datetime.fromtimestamp(request.request_start_time)),
+            'req_links_logs': request.request_links_logs,
+        }
+
+        try:
+            req_json_data = request.json
+            if req_json_data:
+                log_msg['params']['req_json_data'] = req_json_data
+        except:
+            pass
+
+        try:
+            log_msg['rsp_data'] = response.content_body_text
+        except:
+            pass
+
+        # 计算请求完成消耗的时间--保留两位小数点
+        log_msg['cost_time'] = str(
+            (float("%.3f" %
+                   (time.time() - request.request_start_time)) * 1000)) + ''
+        logger.info(log_msg)
