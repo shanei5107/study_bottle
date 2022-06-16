@@ -3,8 +3,7 @@
 import os
 import sys
 
-sys.path.insert(0,
-                os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from bottle import run, route, hook
 from core.application import create_default_app_application
@@ -21,8 +20,7 @@ def curr_create_customize_log():
     """
     配置日志路径、配置信息
     """
-    create_customize_log(pro_path=os.path.abspath(
-        os.path.join(os.path.dirname(__file__), '..')))
+    create_customize_log(pro_path=os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 
 def test_customize_log_writer():
@@ -38,8 +36,7 @@ def before_request():
     每次请求前的勾子
     """
     REQUEST_METHOD = request.environ.get('REQUEST_METHOD')
-    HTTP_ACCESS_CONTROL_REQUEST_METHOD = request.environ.get(
-        'HTTP_ACCESS_CONTROL_REQUEST_METHOD')
+    HTTP_ACCESS_CONTROL_REQUEST_METHOD = request.environ.get('HTTP_ACCESS_CONTROL_REQUEST_METHOD')
     if REQUEST_METHOD == 'OPTIONS' and HTTP_ACCESS_CONTROL_REQUEST_METHOD:
         request.environ['REQUEST_METHOD'] = HTTP_ACCESS_CONTROL_REQUEST_METHOD
 

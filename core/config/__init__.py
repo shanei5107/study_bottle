@@ -13,8 +13,7 @@ def register_init_confg(config_pro_path=None, files_name=None):
         else:
             if isinstance(files_name, list):
                 for item in files_name:
-                    config.read(config_pro_path + '\\' + item,
-                                encoding='utf-8')
+                    config.read(config_pro_path + '\\' + item, encoding='utf-8')
             else:
                 config.read(config_pro_path + '\\' + item, encoding='utf-8')
     except Exception as e:

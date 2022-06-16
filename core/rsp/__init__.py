@@ -20,11 +20,7 @@ class _BasicResponse(HTTPResponse):
     # 默认支持跨域
     customize_headers = {'Access-Control-Allow-Origin': '*'}
 
-    def __init__(self,
-                 code=code,
-                 status=http_status_code,
-                 body=None,
-                 **options):
+    def __init__(self, code=code, status=http_status_code, body=None, **options):
         if not body:
             body = dict(
                 code=self.code,
@@ -35,24 +31,19 @@ class _BasicResponse(HTTPResponse):
         self.body = json_helper.dict_to_json_ensure_ascii_indent(obj=body)
 
         if self.customize_headers:
-
-            super(_BasicResponse,
-                  self).__init__(body=self.body,
-                                 headers=self.customize_headers,
-                                 status=status,
-                                 **options)
+            self.headers['Content_type'] = 'application/json'
+            super(_BasicResponse, self).__init__(body=self.body,
+                                                 headers=self.customize_headers,
+                                                 status=status,
+                                                 **options)
         else:
             # 默认的允许进行跨域请求处理
             self.headers['Access-Control-Allow-Origin'] = '*'
             self.headers['Access-Control-Allow-Credentials'] = 'true'
             self.headers['Access-Control-Allow-Origin'] = '*'
-            self.headers[
-                'Access-Control-Allow-Methods'] = 'GET,POST,PUT,OPTIONS,DEL'
+            self.headers['Access-Control-Allow-Methods'] = 'GET,POST,PUT,OPTIONS,DEL'
             self.headers['Access-Control-Allow-Headers'] = "*"
-            super(_BasicResponse, self).__init__(body=self.body,
-                                                 headers=self.headers,
-                                                 status=status,
-                                                 **options)
+            super(_BasicResponse, self).__init__(body=self.body, headers=self.headers, status=status, **options)
 
 
 class ApiResponse(_BasicResponse):
@@ -84,10 +75,7 @@ class ApiResponse(_BasicResponse):
         self.body = body
         response.content_body_text = body
 
-        super(ApiResponse, self).__init__(status=self.http_status_code,
-                                          code=self.code,
-                                          body=self.body,
-                                          **options)
+        super(ApiResponse, self).__init__(status=self.http_status_code, code=self.code, body=self.body, **options)
 
 
 class BadRequestException(ApiResponse):
