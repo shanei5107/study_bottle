@@ -29,7 +29,7 @@ def test_customize_log_writer():
     """
     测试写入日志
     """
-    logger.debug('服务启动......')
+    logger.info('服务启动......')
 
 
 @hook('before_request')

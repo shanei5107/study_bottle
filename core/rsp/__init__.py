@@ -9,9 +9,9 @@ SUCCESS_CODE = 0
 
 
 class _BasicResponse(HTTPResponse):
-    '''
+    """
     基类封装
-    '''
+    """
     http_status_code = 500
     code = 500
     success = False
@@ -56,9 +56,9 @@ class _BasicResponse(HTTPResponse):
 
 
 class ApiResponse(_BasicResponse):
-    '''
+    """
     接口响应类封装
-    '''
+    """
     http_status_code = 200
     code = 0
     success = (code == SUCCESS_CODE)
