@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
 from importlib.resources import path
+import json
 from resource import getrusage
 import time
 from bottle import request, response
 from datetime import datetime
 from loguru import logger
+
+from core.helper import json_helper
 
 
 def create_customize_log(pro_path=None):
@@ -93,21 +96,22 @@ def register_link_end_log_record_handler():
     path_info = request.environ.get('PATH_INFO')
     if path_info not in WHITE_PATH_LIST and request.method != 'OPTIONS':
         link_add_log_record(event_des='request-end')
+
+        # 请求头信息
+        # print(dict(request.headers))
+
         # 统筹记录最后的请求日志信息
         log_msg = {
             'host': request.headers.get('Host'),
+            'ip': request.remote_addr,
             'url': request.url,
             'method': request.method,
             'params': {
-                'query_string':
-                '' if not request.query_string else request.query_string,
                 'query':
                 '' if not request.query else request.query.decode("utf-8"),
                 'forms': '' if not request.forms else request.forms,
                 'body': '' if not request.body else request.body,
             },
-            'req_stime':
-            str(datetime.fromtimestamp(request.request_start_time)),
             'req_links_logs': request.request_links_logs,
         }
 
@@ -124,7 +128,11 @@ def register_link_end_log_record_handler():
             pass
 
         # 计算请求完成消耗的时间--保留两位小数点
+        end_time = time.time()
+        log_msg['req_stime'] = str(
+            datetime.fromtimestamp(request.request_start_time))
+        log_msg['req_etime'] = str(datetime.fromtimestamp(end_time))
         log_msg['cost_time'] = str(
             (float("%.3f" %
-                   (time.time() - request.request_start_time)) * 1000)) + ''
+                   (end_time - request.request_start_time)) * 1000)) + ''
         logger.info(log_msg)

@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
-from dataclasses import dataclass
 from enum import Enum, unique
-from sre_constants import SUCCESS
 from bottle import HTTPResponse, response, request
 
-from core.logger import register_link_end_log_record_handler
+from ..helper import json_helper
 
 # 成功
 SUCCESS_CODE = 0
@@ -34,7 +32,10 @@ class _BasicResponse(HTTPResponse):
                 success=(self.code == SUCCESS_CODE),
             )
         # 设置返回响应体信息
+        self.body = json_helper.dict_to_json_ensure_ascii_indent(obj=body)
+
         if self.customize_headers:
+
             super(_BasicResponse,
                   self).__init__(body=self.body,
                                  headers=self.customize_headers,
@@ -82,9 +83,6 @@ class ApiResponse(_BasicResponse):
         # 返回消息体写入
         self.body = body
         response.content_body_text = body
-        # 请求完成后最终的日志处理
-        if not self.code in [404, 405]:
-            register_link_end_log_record_handler()
 
         super(ApiResponse, self).__init__(status=self.http_status_code,
                                           code=self.code,

@@ -6,16 +6,15 @@ import sys
 sys.path.insert(0,
                 os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from bottle import run, route, HTTPError, install, hook
+from bottle import run, route, hook
 from core.application import create_default_app_application
 from core.logger import logger, create_customize_log, register_link_init_log_record_handler, register_link_end_log_record_handler
-from core.exceptions import ErrorsRestPlugin
 from core.rsp import *
 
 
 @route('/hello')
 def hello():
-    return 'hello RAY!'
+    return ApiResponse(msg='Hello Ray!!!')
 
 
 def curr_create_customize_log():
@@ -49,6 +48,18 @@ def before_request():
 
     # 初始化日志记录
     register_link_init_log_record_handler()
+
+    # todo Token 校验
+    pass
+
+
+@hook('after_request')
+def after_request():
+    """
+    请求结束后的勾子
+    """
+    # 结束请求日志
+    register_link_end_log_record_handler()
 
 
 from app import api
