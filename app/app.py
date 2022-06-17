@@ -40,23 +40,6 @@ def curr_register_init_config():
     register_init_confg(config_pro_path=pro_path, file_name='config.ini')
 
 
-# def test_read_config():
-#     """
-#     从配置文件中读取redis配置
-#     """
-#     redis_config_const = {
-#         # 服务地址
-#         'host': config.get('redis', 'host'),
-#         # 服务端口
-#         'post': config.get('redis', 'port'),
-#         # 服务密码
-#         'password': config.get('redis', 'password'),
-#         # 数据库序号
-#         'db': config.getint('redis', 'db')
-#     }
-#     print(redis_config_const)
-
-
 def register_cache(config):
     """
     注册缓存处理
@@ -114,9 +97,6 @@ if __name__ == '__main__':
 
     # 缓存注册
     register_cache(config)
-
-    # 测试写入日志
-    # test_customize_log_writer()
 
     # 创建应用实例
     app = create_default_app_application()
