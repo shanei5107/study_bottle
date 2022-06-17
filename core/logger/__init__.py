@@ -10,6 +10,7 @@ from loguru import logger
 from core.helper import json_helper
 
 
+#  自定义日志配置
 def create_customize_log(pro_path=None):
     """
     loguru日志集成
@@ -65,6 +66,7 @@ def link_add_log_record(event_des='', msg_dict={}, remarks=''):
 WHITE_PATH_LIST = ['/favicon.ico', 'health']
 
 
+# 初始化请求日志
 def register_link_init_log_record_handler():
     """
     过滤指定一些路由的请求，不记录日志
@@ -80,6 +82,7 @@ def register_link_init_log_record_handler():
         link_add_log_record(event_des='request-start')
 
 
+# 请求日志完结
 def register_link_end_log_record_handler():
     """
     一个请求结束的时候，日志记录下这个请求的整个过程和返回响应体信息

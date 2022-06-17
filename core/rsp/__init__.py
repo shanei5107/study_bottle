@@ -31,7 +31,6 @@ class _BasicResponse(HTTPResponse):
         self.body = json_helper.dict_to_json_ensure_ascii_indent(obj=body)
 
         if self.customize_headers:
-            self.headers['Content_type'] = 'application/json'
             super(_BasicResponse, self).__init__(body=self.body,
                                                  headers=self.customize_headers,
                                                  status=status,
@@ -56,8 +55,9 @@ class ApiResponse(_BasicResponse):
     msg = '成功'
     data = None
 
-    def __init__(self, data=None, msg=None, **options):
-
+    def __init__(self, code=None, data=None, msg=None, **options):
+        if code:
+            self.code = code
         if data:
             self.data = data
         if msg:
@@ -133,23 +133,18 @@ class RateLimitApiException(ApiResponse):
     msg = '请求次数受限'
 
 
-class BusinessException(ApiResponse):
+class BusinessError(ApiResponse):
     http_status_code = 200
     code = 9999
     msg = '业务异常'
-
-
-class CustomizeApiResponse(ApiResponse):
-    http_status_code = 200
-    code = SUCCESS_CODE
     data = None
-    msg = '成功'
 
 
 @unique
 class ApiStatus(Enum):
     OK = (0, '成功')
     FAIL = (-1, '未知异常')
+    BUSINESS_ERROR = (9999, '业务异常')
 
     def get_code(self):
         return self.value[0]

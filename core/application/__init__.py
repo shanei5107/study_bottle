@@ -2,8 +2,8 @@
 import re
 from bottle import Bottle, default_app, run, response, request, hook, route, install, get, error, HTTPError, HTTPResponse, TEMPLATE_PATH, static_file
 from beaker.middleware import SessionMiddleware
-from core.exceptions import ErrorsRestPlugin
-from core.rsp import ForbiddenException, InternalErrorException, MethodNotAllowedException, NotfoundException, OtherException, ParameterException, RateLimitApiException
+from core.exceptions import BusinessException, ErrorsRestPlugin
+from core.rsp import BusinessError, ForbiddenException, InternalErrorException, MethodNotAllowedException, NotfoundException, OtherException, ParameterException, RateLimitApiException
 from core.logger import logger
 from core.signal import signal_handle
 
@@ -42,6 +42,9 @@ def _register_global_error_catch(e, is_send=True):
             return RateLimitApiException()
         else:
             return OtherException(code=code)
+    elif isinstance(e, BusinessException):
+        # 自定义业务异常类
+        return BusinessError(code=e.code, msg=e.msg)
     else:
         logger.exception(e)
         #  todo 发送告警

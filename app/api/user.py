@@ -2,7 +2,9 @@
 
 from bottle import route
 
+from core.rsp import ApiResponse
+
 
 @route('/user/action', method=['POST', 'GET', 'OPTIONS'])
 def index():
-    return '我是用户接口'
+    return ApiResponse(msg='我是用户接口')

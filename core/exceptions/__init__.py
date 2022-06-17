@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from shutil import ExecError
+
 
 class ErrorsRestPlugin():
     name = 'ErrorsRestPlugin'
@@ -26,3 +28,13 @@ class ErrorsRestPlugin():
                 return self.error_handler(e)
 
         return wrapper
+
+
+class BusinessException(Exception):
+    """
+    自定义异常类
+    """
+
+    def __init__(self, code=9999, msg=''):
+        self.code = code
+        self.msg = msg
