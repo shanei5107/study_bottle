@@ -43,6 +43,7 @@ def _register_global_error_catch(e, is_send=True):
         else:
             return OtherException(code=code)
     elif isinstance(e, BusinessException):
+        logger.warning(e.msg)
         # 自定义业务异常类
         return BusinessError(code=e.code, msg=e.msg)
     else:
@@ -55,6 +56,10 @@ def _register_global_error_catch(e, is_send=True):
 
 
 def create_default_app_application():
+    """
+    创建bottle默认的应用实例
+    """
+    logger.info('应用实例加载......')
     #  注册默认的接收广播
     _register_default_signal_handle()
 

@@ -147,7 +147,13 @@ class ApiStatus(Enum):
     BUSINESS_ERROR = (9999, '业务异常')
 
     def get_code(self):
+        """
+        根据枚举名称取状态码code
+        """
         return self.value[0]
 
     def get_msg(self):
+        """
+        根据枚举名称取状态说明msg
+        """
         return str(self.value[1])

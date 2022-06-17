@@ -124,5 +124,5 @@ def register_link_end_log_record_handler():
         end_time = time.time()
         log_msg['req_stime'] = str(datetime.fromtimestamp(request.request_start_time))
         log_msg['req_etime'] = str(datetime.fromtimestamp(end_time))
-        log_msg['cost_time'] = str((float("%.3f" % (end_time - request.request_start_time)) * 1000)) + ''
+        log_msg['cost_time'] = str((float("%.3f" % (end_time - request.request_start_time)) * 1000)) + 'ms'
         logger.info(log_msg)
