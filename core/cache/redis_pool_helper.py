@@ -40,10 +40,10 @@ class RedisCache(object):
 
     def __init__(self, _redis=None):
         if _redis:
-            pool = redis.ConnectionPool(host=_redis['host'],
-                                        port=_redis['port'],
-                                        db=_redis['db'],
-                                        password=_redis['password'],
+            pool = redis.ConnectionPool(host=_redis.get('host', ''),
+                                        port=_redis.get('port', ''),
+                                        db=_redis.get('db', ''),
+                                        password=_redis.get('password', ''),
                                         socket_timeout=1,
                                         socket_connect_timeout=1,
                                         decode_responses=True)
@@ -51,10 +51,10 @@ class RedisCache(object):
 
     def init_app(self, _redis):
         if _redis:
-            pool = redis.ConnectionPool(host=_redis['host'],
-                                        port=_redis['port'],
-                                        db=_redis['db'],
-                                        password=_redis['password'],
+            pool = redis.ConnectionPool(host=_redis.get('host', ''),
+                                        port=_redis.get('port', ''),
+                                        db=_redis.get('db', ''),
+                                        password=_redis.get('password', ''),
                                         socket_timeout=1,
                                         socket_connect_timeout=1,
                                         decode_responses=True)
@@ -70,10 +70,10 @@ class RedisCache(object):
 
     def get_connection(self, _redis=None):
         if _redis:
-            pool = redis.ConnectionPool(host=_redis['host'],
-                                        port=_redis['port'],
-                                        db=_redis['db'],
-                                        password=_redis['password'],
+            pool = redis.ConnectionPool(host=_redis.get('host', ''),
+                                        port=_redis.get('port', ''),
+                                        db=_redis.get('db', ''),
+                                        password=_redis.get('password', ''),
                                         socket_timeout=1,
                                         socket_connect_timeout=1,
                                         decode_responses=True)
