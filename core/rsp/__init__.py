@@ -18,7 +18,7 @@ class _BasicResponse(HTTPResponse):
     msg = '抱歉，服务器未知错误'
 
     # 默认支持跨域
-    customize_headers = {'Access-Control-Allow-Origin': '*'}
+    customize_headers = {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json;charset=UTF-8'}
 
     def __init__(self, code=code, status=http_status_code, body=None, **options):
         if not body:
